@@ -1,9 +1,10 @@
 class AuthenticationService
-  attr_reader :profile, :token
+  attr_reader :profile, :token, :notification
 
-  def initialize(profile = nil, token = nil)
+  def initialize(profile = nil, token = nil, notification)
     @profile = profile || ProfileDao.new
     @token = token || RsaTokenDao.new
+    @notification = notification
   end
 
   def valid?(account, password)
@@ -16,6 +17,7 @@ class AuthenticationService
     if is_valid
       true
     else
+      notification.notify("account:#{account} try to login failed")
       false
     end
   end

@@ -23,7 +23,8 @@ describe 'Authentication' do
   before do
     @profile = double
     @token = double
-    @authentication = AuthenticationService.new(@profile, @token)
+    @notification = spy
+    @authentication = AuthenticationService.new(@profile, @token, @notification)
   end
 
   after do
@@ -47,6 +48,22 @@ describe 'Authentication' do
         given_otp('0' * 6)
         should_be_invalid(account, 'wrong password')
       end
+
+      it 'should notify user' do
+        account = 'joey'
+        given_password(account, '91')
+        given_otp('0' * 6)
+        @authentication.valid?(account, 'wrong password')
+
+        RSpec::Matchers.define :message_matcher do |account, status|
+          match { |message| message.include?(account) && message.include?(status) }
+        end
+
+        expect(@notification).to have_received(:notify)
+                                   .with(message_matcher(account, 'login failed'))
+                                   .once
+      end
+
     end
   end
 
