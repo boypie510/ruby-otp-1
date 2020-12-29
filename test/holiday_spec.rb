@@ -26,6 +26,12 @@ describe 'Holiday' do
         say_hello_should_be('Merry Xmas')
       end
     end
+    context 'when today is not Xmas' do
+      it 'should return Today is not Xmas' do
+        given_today(12, 26)
+        say_hello_should_be('Today is not Xmas')
+      end
+    end
 
   end
 end
