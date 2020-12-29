@@ -14,6 +14,11 @@ def should_be_valid(account, password)
   expect(is_valid).to be(true)
 end
 
+def should_be_invalid(account, password)
+  is_valid = @authentication.valid?(account, password)
+  expect(is_valid).to be(false)
+end
+
 describe 'Authentication' do
   before do
     @profile = double
@@ -33,6 +38,14 @@ describe 'Authentication' do
         given_password(account, password)
         given_otp(otp)
         should_be_valid(account, password + otp)
+      end
+    end
+    context "when invalid" do
+      it 'should be return false' do
+        account = 'joey'
+        given_password(account, '91')
+        given_otp('0' * 6)
+        should_be_invalid(account, 'wrong password')
       end
     end
   end
