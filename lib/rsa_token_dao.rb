@@ -1,4 +1,4 @@
-class RasTokenDao
+class RsaTokenDao
   def random_token(account)
     (0..9)
       .to_a

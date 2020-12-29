@@ -3,7 +3,7 @@ class AuthenticationService
 
   def initialize(profile = nil, token = nil)
     @profile = profile || ProfileDao.new
-    @token = token || RasTokenDao.new
+    @token = token || RsaTokenDao.new
   end
 
   def valid?(account, password)
