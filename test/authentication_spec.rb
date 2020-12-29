@@ -1,9 +1,24 @@
 require 'rspec'
 require_relative '../lib/loads'
 
+def given_password(account, password)
+  allow(@profile).to receive(:password).with(account).and_return(password)
+end
+
+def given_otp(otp)
+  allow(@token).to receive(:random_token).and_return(otp)
+end
+
+def should_be_valid(account, password)
+  is_valid = @authentication.valid?(account, password)
+  expect(is_valid).to be(true)
+end
+
 describe 'Authentication' do
   before do
-    # Do nothing
+    @profile = double
+    @token = double
+    @authentication = AuthenticationService.new(@profile, @token)
   end
 
   after do
@@ -12,15 +27,12 @@ describe 'Authentication' do
   describe ":is_valid" do
     context "when valid" do
       it 'should be return true' do
-        profile = double
-        allow(profile).to receive(:password).with('joey').and_return('91')
-
-        token = double
-        allow(token).to receive(:random_token).and_return('0' * 6)
-
-        authentication = AuthenticationService.new(profile, token)
-        is_valid = authentication.valid?('joey', '91000000')
-        expect(is_valid).to be(true)
+        account = 'joey'
+        password = '91'
+        otp = '0' * 6
+        given_password(account, password)
+        given_otp(otp)
+        should_be_valid(account, password + otp)
       end
     end
   end
