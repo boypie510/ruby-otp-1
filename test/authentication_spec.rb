@@ -9,10 +9,14 @@ describe 'Authentication' do
   after do
     # Do nothing
   end
-  it 'should be valid' do
-    authentication = AuthenticationService.new
-    is_valid = authentication.valid?('joey', '91000000')
-    expect(is_valid).to be(true)
+  describe ":is_valid" do
+    context "when valid" do
+      it 'should be return true' do
+        authentication = AuthenticationService.new
+        is_valid = authentication.valid?('joey', '91000000')
+        expect(is_valid).to be(true)
+      end
+    end
   end
 
 end
