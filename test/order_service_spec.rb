@@ -36,7 +36,8 @@ describe 'OrderService' do
       given_orders(%w[book cd book])
       @order_service.sync_book_orders
       should_insert_orders('book', 2)
-
+      expect(@book_dao).not_to have_received(:insert_order)
+                                 .with(book_order_matcher('cd'))
     end
   end
 
