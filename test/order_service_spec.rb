@@ -10,9 +10,15 @@ def given_orders(types)
   allow(@order_service).to receive(:get_orders).and_return(orders)
 end
 
+RSpec::Matchers.define :book_order_matcher do ||
+  match { |order| order.type == 'book' }
+end
+
 describe 'OrderService' do
   before do
     @order_service = OrderService.new
+    @book_dao = spy
+    allow(@order_service).to receive(:get_book_dao).and_return(@book_dao)
   end
 
   after do
@@ -22,16 +28,11 @@ describe 'OrderService' do
   context 'when part of orders were book orders' do
     it 'should be 2 book orders inserted when 3 orders with 2 book' do
       given_orders(%w[book cd book])
-      book_dao = spy
-      allow(@order_service).to receive(:get_book_dao).and_return(book_dao)
       @order_service.sync_book_orders
 
-      RSpec::Matchers.define :book_order_matcher do ||
-        match { |order| order.type == 'book' }
-      end
-      expect(book_dao).to have_received(:insert_order)
-                            .with(book_order_matcher)
-                            .twice
+      expect(@book_dao).to have_received(:insert_order)
+                             .with(book_order_matcher)
+                             .twice
 
     end
   end
