@@ -20,6 +20,11 @@ def should_insert_orders(type, count)
                          .exactly(count).times
 end
 
+def should_not_insert_order(type)
+  expect(@book_dao).not_to have_received(:insert_order)
+                             .with(book_order_matcher(type))
+end
+
 describe 'OrderService' do
   before do
     @order_service = OrderService.new
@@ -36,8 +41,7 @@ describe 'OrderService' do
       given_orders(%w[book cd book])
       @order_service.sync_book_orders
       should_insert_orders('book', 2)
-      expect(@book_dao).not_to have_received(:insert_order)
-                                 .with(book_order_matcher('cd'))
+      should_not_insert_order('cd')
     end
   end
 
