@@ -10,8 +10,14 @@ def given_orders(types)
   allow(@order_service).to receive(:get_orders).and_return(orders)
 end
 
-RSpec::Matchers.define :book_order_matcher do ||
-  match { |order| order.type == 'book' }
+RSpec::Matchers.define :book_order_matcher do |type|
+  match { |order| order.type == type }
+end
+
+def should_insert_orders(type, count)
+  expect(@book_dao).to have_received(:insert_order)
+                         .with(book_order_matcher(type))
+                         .exactly(count).times
 end
 
 describe 'OrderService' do
@@ -29,10 +35,7 @@ describe 'OrderService' do
     it 'should be 2 book orders inserted when 3 orders with 2 book' do
       given_orders(%w[book cd book])
       @order_service.sync_book_orders
-
-      expect(@book_dao).to have_received(:insert_order)
-                             .with(book_order_matcher)
-                             .twice
+      should_insert_orders('book', 2)
 
     end
   end
